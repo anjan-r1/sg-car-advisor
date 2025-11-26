@@ -1,0 +1,71 @@
+# url_builder.py
+"""
+Build SGCarMart used-car listing URLs from CarFilters.
+
+We target URLs like:
+
+https://www.sgcarmart.com/used-cars/listing?
+  limit=20&veh=15&q=bmw&pr1=100000&pr2=150000&dp1=&dp2=&fr=2010&to=2025&
+  mil1=&mil2=150000&eng=5&own_c=%3C&own=3&mod=
+
+Usage:
+    from filters import profile_to_filters
+    from url_builder import build_used_cars_url
+
+    filters = profile_to_filters(profile, brand="bmw")
+    url = build_used_cars_url(filters)
+"""
+
+from typing import Dict, Any
+from urllib.parse import urlencode
+
+from filters import CarFilters
+
+
+BASE_USED_URL = "https://www.sgcarmart.com/used-cars/listing"
+
+
+def _none_to_empty(value: Any) -> str:
+    """Convert None to '' and leave other values as-is."""
+    if value is None:
+        return ""
+    return str(value)
+
+
+def build_used_cars_url(filters: CarFilters, limit: int = 20) -> str:
+    """
+    Build a SGCarMart used-car listing URL from CarFilters.
+
+    Parameters
+    ----------
+    filters : CarFilters
+        Structured filters (brand, price band, year range, etc.)
+    limit : int
+        Number of listings per page (e.g. 20, 50, 100).
+        Maps to 'limit' query parameter.
+
+    Returns
+    -------
+    str : fully-formed URL
+    """
+    params: Dict[str, Any] = {
+        "limit": limit,
+        "veh": filters.body_type_code,                 # body type
+        "q": filters.brand or "",                      # keyword, usually brand
+        "pr1": _none_to_empty(filters.min_price),      # min price
+        "pr2": _none_to_empty(filters.max_price),      # max price
+        "dp1": _none_to_empty(filters.min_depreciation),
+        "dp2": _none_to_empty(filters.max_depreciation),
+        "fr": _none_to_empty(filters.min_year),        # year from
+        "to": _none_to_empty(filters.max_year),        # year to
+        "mil1": _none_to_empty(filters.min_mileage),   # mileage from
+        "mil2": _none_to_empty(filters.max_mileage),   # mileage to
+        "eng": _none_to_empty(filters.engine_cc_category),  # engine cc category
+        "own_c": "<",                                  # own_c is comparison, "<"
+        "own": _none_to_empty(filters.max_owners),     # max owners
+        "mod": "",                                     # model keyword (optional)
+    }
+
+    # urlencode will automatically convert "<" to %3C etc.
+    query = urlencode(params)
+    return f"{BASE_USED_URL}?{query}"

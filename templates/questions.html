@@ -1,0 +1,161 @@
+<!-- templates/questions.html -->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Tell us about your needs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #050816;
+      color: #f9fafb;
+    }
+    .shell {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 24px;
+    }
+    .card {
+      background: #020617;
+      border-radius: 18px;
+      padding: 24px 28px;
+      box-shadow: 0 10px 30px rgba(15,23,42,0.8);
+      border: 1px solid rgba(148,163,184,0.25);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(56,189,248,0.15);
+      color: #7dd3fc;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .title {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #9ca3af;
+      margin-bottom: 20px;
+    }
+    .question-label {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+    .question-text {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: #020617;
+      color: #e5e7eb;
+      padding: 10px 12px;
+      font-size: 14px;
+      resize: vertical;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 1px rgba(56,189,248,0.6);
+    }
+    .btn-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg,#22c55e,#16a3d6);
+      border: none;
+      border-radius: 999px;
+      color: #f9fafb;
+      font-weight: 600;
+      padding: 8px 22px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+    .history {
+      margin-top: 22px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(31,41,55,0.9);
+    }
+    .history-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-bottom: 10px;
+    }
+    .qa-item {
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .qa-item span.q {
+      color: #93c5fd;
+      font-weight: 600;
+    }
+    .qa-item span.a {
+      color: #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="card">
+      <div class="badge">
+        <span>🧠 Tell us about your needs</span>
+        <span style="font-size: 11px; opacity: .8;">
+          Question {{ question_index }} of {{ total_questions }}
+        </span>
+      </div>
+
+      <div class="question-label">Current question</div>
+      <div class="question-text">
+        {{ question or "Loading next question..." }}
+      </div>
+
+      <form method="post">
+        <!-- keep current question hidden so we can record it with the answer -->
+        <input type="hidden" name="question_text" value="{{ question }}">
+
+        <textarea name="answer" placeholder="Type your answer here..." required></textarea>
+
+        <div class="btn-row">
+          <button type="submit" class="btn-primary">
+            Next
+          </button>
+        </div>
+      </form>
+
+      {% if history and history|length > 0 %}
+      <div class="history">
+        <div class="history-title">Your answers so far</div>
+        {% for qa in history %}
+          <div class="qa-item">
+            <span class="q">Q:</span>
+            <span class="a">{{ qa.question }}</span><br>
+            <span class="q">A:</span>
+            <span class="a">{{ qa.answer }}</span>
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

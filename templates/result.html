@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}SG Car Advisor – Summary{% endblock %}
+
+{% block content %}
+  <div class="flex items-center gap-3 mb-4">
+    <div class="bg-emerald-500/90 rounded-xl p-2">
+      <span class="text-2xl">✅</span>
+    </div>
+    <div>
+      <h1 class="text-xl font-semibold">Your Car Profile Summary</h1>
+      <p class="text-slate-400 text-xs">
+        Based on {{ history|length }} answers.
+      </p>
+    </div>
+  </div>
+
+  <div class="bg-emerald-900/30 border border-emerald-600 rounded-xl p-4 mb-4 text-sm">
+    <h2 class="font-semibold text-emerald-300 mb-1">AI Recommendation</h2>
+    <p class="text-emerald-100 whitespace-pre-line">
+      {{ summary }}
+    </p>
+  </div>
+
+  <div class="flex items-center gap-3 mb-4">
+    <a
+      href="{{ url_for('recommendations') }}"
+      class="inline-flex items-center px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400
+             text-slate-900 text-sm font-semibold transition-colors"
+    >
+      View live web recommendations
+    </a>
+
+    <a
+      href="{{ url_for('reset') }}"
+      class="inline-flex items-center px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600
+             text-slate-100 text-sm font-medium transition-colors"
+    >
+      Start again
+    </a>
+  </div>
+
+  <div class="bg-slate-900/60 rounded-xl border border-slate-700 p-4 max-h-64 overflow-y-auto mb-4">
+    <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2">
+      Full Q&A history
+    </p>
+    {% if history %}
+      <ol class="space-y-2 text-sm">
+        {% for qa in history %}
+          <li>
+            <div class="text-slate-300">
+              <span class="font-semibold">Q{{ loop.index }}:</span> {{ qa.question }}
+            </div>
+            <div class="text-slate-400">
+              <span class="font-semibold">A{{ loop.index }}:</span> {{ qa.answer }}
+            </div>
+          </li>
+        {% endfor %}
+      </ol>
+    {% else %}
+      <p class="text-slate-500 text-xs">No questions were asked.</p>
+    {% endif %}
+  </div>
+{% endblock %}

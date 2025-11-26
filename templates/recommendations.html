@@ -1,0 +1,204 @@
+<!-- templates/recommendations.html -->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SG Car Advisor – Recommendations</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #050816;
+      color: #f9fafb;
+    }
+    .shell {
+      max-width: 1100px;
+      margin: 32px auto;
+      padding: 0 20px 40px;
+    }
+    .summary-card {
+      background: #020617;
+      border-radius: 18px;
+      padding: 20px 22px;
+      box-shadow: 0 10px 30px rgba(15,23,42,0.8);
+      border: 1px solid rgba(148,163,184,0.25);
+      margin-bottom: 24px;
+    }
+    .summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .summary-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .pill {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(96,165,250,0.7);
+      color: #bfdbfe;
+      background: rgba(37,99,235,0.2);
+    }
+    .summary-body {
+      font-size: 14px;
+      color: #e5e7eb;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 26px 0 10px;
+    }
+
+    .listing-card {
+      background: #020617;
+      border-radius: 16px;
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(31,41,55,0.9);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .listing-main {
+      flex: 1;
+    }
+    .listing-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .value-score {
+      display: inline-block;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(22,163,74,0.15);
+      color: #bbf7d0;
+      border: 1px solid rgba(22,163,74,0.6);
+      margin-bottom: 6px;
+    }
+    .listing-meta {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 8px;
+    }
+    .listing-meta span {
+      margin-right: 12px;
+    }
+    .listing-ai-note {
+      font-size: 13px;
+      color: #e5e7eb;
+      margin-top: 6px;
+      white-space: pre-wrap;
+    }
+    .listing-price {
+      font-size: 16px;
+      font-weight: 700;
+      text-align: right;
+      margin-bottom: 6px;
+    }
+    .btn-link {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(59,130,246,0.7);
+      background: rgba(37,99,235,0.2);
+      color: #bfdbfe;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-link:hover {
+      background: rgba(37,99,235,0.35);
+    }
+    .back-link {
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #93c5fd;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <a href="{{ url_for('questions') }}" class="back-link">
+      ⬅ Back to summary / questions
+    </a>
+
+    <div class="summary-card">
+      <div class="summary-header">
+        <div class="summary-title">Your Personalised Recommendation Summary</div>
+        <div class="pill">AI Generated</div>
+      </div>
+      <div class="summary-body">
+        {{ explanation }}
+      </div>
+    </div>
+
+    <div style="font-size: 12px; color: #9ca3af; margin-bottom: 12px;">
+      Search used for live listings:<br>
+      <span style="color:#60a5fa;">
+        Local DuckDB search (cars.duckdb / car_listings)
+      </span>
+    </div>
+
+    <div class="section-title">Top Value Picks for You</div>
+
+    {% if cars %}
+      {% for car in cars %}
+        <div class="listing-card">
+          <div class="listing-main">
+            <div class="listing-title">
+              {{ loop.index }}. {{ car.category }} - {{ car.make }} {{ car.model }}{% if car.variant %} {{ car.variant }}{% endif %}
+            </div>
+            <div class="value-score">
+              Value Score: {{ '%.1f'|format(car.value_score) }}/100
+            </div>
+            <div class="listing-meta">
+              <span>Year: {{ car.year or '–' }}</span>
+              <span>Mileage: {{ car.mileage_km|int if car.mileage_km is not none else '–' }} km</span>
+              <span>Depreciation: {% if car.depreciation_per_year %}${{ car.depreciation_per_year|int }}/yr{% else %}$0/yr{% endif %}</span>
+            </div>
+
+            {% if car.ai_reason %}
+              <div class="listing-ai-note">
+                {{ car.ai_reason }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div>
+            <div class="listing-price">
+              {% if car.price_sgd is not none %}
+                ${{ '{:,}'.format(car.price_sgd) }}
+              {% else %}
+                Price N/A
+              {% endif %}
+            </div>
+            {% if car.listing_url %}
+              <a class="btn-link" href="{{ car.listing_url }}" target="_blank">
+                View Full Listing
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div style="font-size: 14px; color: #9ca3af;">
+        No cars matched your preferences in the local dataset.
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>

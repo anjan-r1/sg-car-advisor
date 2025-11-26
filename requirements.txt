@@ -1,0 +1,27 @@
+# Core web + environment
+flask==3.0.0
+python-dotenv==1.0.1
+requests==2.32.3
+beautifulsoup4==4.12.3
+
+# Data manipulation & storage
+pandas==2.2.2
+duckdb==1.1.2          # new: local analytical DB for scraped data
+sqlalchemy==2.0.34
+
+# LangChain & LLM integration
+langchain==0.2.14
+langchain-openai==0.1.22
+tenacity==8.3.0         # new: for retry logic in scrapers and API calls
+openai==1.51.0
+
+# Visualization & dashboard
+streamlit==1.37.1
+plotly==5.24.1
+
+# Optional utilities (safe to include)
+python-dateutil==2.9.0.post0
+httpx==0.27.0
+groq==0.11.0
+
+
