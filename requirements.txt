@@ -1,19 +1,13 @@
 # Core web
 flask==3.0.0
 gunicorn==22.0.0
-
-# Environment
 python-dotenv==1.0.1
+requests==2.32.3
 
-# Data
+# Data & DB
 pandas==2.2.2
 duckdb==1.1.2
 
-# HTTP (if any small web calls in future)
-requests==2.32.3
-
 # LLM client
+httpx==0.26.0
 groq==0.11.0
-
-# Utility
-python-dateutil==2.9.0.post0
